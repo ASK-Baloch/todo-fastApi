@@ -1,21 +1,22 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
+import streamlit as st
 from database import get_db
 from app.schemas.todo import TodoCreate 
 from app.models.todo import Todo , TodoStatus
 
 app = FastAPI()
 
-@app.get("/api/v1/todos")
+@app.get("/")
 def get_todos(db:Session = Depends(get_db)):
     return db.query(Todo).all()
 
-@app.get("/api/v1/todos/{todo_id}")
+@app.get("/{todo_id}")
 def get_todo( todo_id:int , db:Session = Depends(get_db)):
     return db.query(Todo).filter(Todo.id == todo_id).first()   
 
-@app.put("/api/v1/todos/{todo_id}")
+@app.put("/{todo_id}")
 def update_todo( todo_id:int , db:Session = Depends(get_db)):
     try:
         todo =  db.query(Todo).filter(Todo.id == todo_id).first()   
@@ -41,7 +42,7 @@ def update_todo( todo_id:int , db:Session = Depends(get_db)):
         print(e)
         raise HTTPException(status_code=500, detail="UnExpected Error Occured")
     
-@app.delete("/api/v1/todos/{todo_id}")
+@app.delete("/{todo_id}")
 def delete_todo( todo_id:int , db:Session = Depends(get_db)):
     try:
         todo =  db.query(Todo).filter(Todo.id == todo_id).first()   
@@ -61,7 +62,7 @@ def delete_todo( todo_id:int , db:Session = Depends(get_db)):
         print(e)
         raise HTTPException(status_code=500, detail="UnExpected Error Occured")
 
-@app.post("/api/v1/todos")
+@app.post("/")
 def create_todo(todo_request: TodoCreate , db:Session = Depends(get_db)):
     try:
         new_todo = Todo(content = todo_request.content)
