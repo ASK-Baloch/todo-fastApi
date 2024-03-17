@@ -4,3 +4,5 @@ uvicorn
 python-dotenv
 mysql-connector-python
 alembic
+streamlit
+requests
